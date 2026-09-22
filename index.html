@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Собери компьютер!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eaf6ff; --bg2:#dff3ff;
+  --ink:#233156; --ink-soft:#5a6a94;
+  --card:#ffffff;
+  --case:#2b3355; --case-2:#20263f;
+  --mobo:#4caf7d; --mobo-d:#379a63;
+  --cpu:#8b5cf6; --cpu-d:#6d3fe0;
+  --ram:#ffc93c; --ram-d:#e8a900;
+  --gpu:#ef476f; --gpu-d:#d12b53;
+  --hdd:#06aed5; --hdd-d:#0392b3;
+  --ok:#2fbf71;
+  --shadow: 0 10px 26px rgba(35,49,86,.14);
+}
+:root:not([data-theme="light"]) { }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141a2e; --bg2:#101426;
+    --ink:#eef1ff; --ink-soft:#aab3d6;
+    --card:#1d2440;
+    --case:#0e1226; --case-2:#080a17;
+    --shadow: 0 10px 26px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141a2e; --bg2:#101426;
+  --ink:#eef1ff; --ink-soft:#aab3d6;
+  --card:#1d2440;
+  --case:#0e1226; --case-2:#080a17;
+  --shadow: 0 10px 26px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; min-height:100%;
+  background:radial-gradient(120% 140% at 15% 0%, var(--bg2), var(--bg));
+  font-family:'Baloo 2', system-ui, sans-serif;
+  color:var(--ink);
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  overflow-x:hidden;
+  -webkit-user-select:none; user-select:none;
+}
+.wrap{max-width:980px; margin:0 auto; padding:18px 16px 40px;}
+header{text-align:center; margin-bottom:10px;}
+h1{font-size:clamp(26px,5vw,40px); font-weight:800; margin:6px 0 2px; letter-spacing:.5px;}
+.subtitle{color:var(--ink-soft); font-weight:500; font-size:clamp(14px,2.4vw,18px); margin:0 0 14px;}
+
+.steps{list-style:none; display:flex; justify-content:center; gap:10px; padding:0; margin:0 0 18px; flex-wrap:wrap;}
+.step{
+  display:flex; align-items:center; gap:8px;
+  background:var(--card); border-radius:999px; padding:6px 14px 6px 6px;
+  box-shadow:var(--shadow); font-weight:700; font-size:14px; color:var(--ink-soft);
+  transition:transform .25s, box-shadow .25s, color .25s;
+}
+.step .dot{width:26px; height:26px; border-radius:50%; background:#cfd6ee; display:flex; align-items:center; justify-content:center; font-size:14px; color:#fff; flex:none;}
+.step.active{color:var(--ink); transform:translateY(-2px) scale(1.04); box-shadow:0 8px 20px rgba(35,49,86,.22);}
+.step.active .dot{background:var(--part-color,#8b5cf6);}
+.step.done{color:var(--ok);}
+.step.done .dot{background:var(--ok);}
+
+.stage{display:grid; grid-template-columns:1fr; gap:18px; align-items:start;}
+@media(min-width:760px){ .stage{grid-template-columns:230px 1fr;} }
+
+.tray{display:flex; flex-direction:row; gap:12px; overflow-x:auto; padding:4px 2px;}
+@media(min-width:760px){ .tray{flex-direction:column; overflow:visible;} }
+
+.card{
+  flex:none; width:170px;
+  background:var(--card); border-radius:18px; padding:12px;
+  box-shadow:var(--shadow); text-align:center; cursor:grab;
+  border:3px solid transparent;
+  transition:opacity .3s, filter .3s, border-color .3s, transform .15s;
+  touch-action:none;
+}
+@media(min-width:760px){ .card{width:auto;} }
+.card .icon-box{width:100%; aspect-ratio:1.3/1; display:flex; align-items:center; justify-content:center; margin-bottom:6px;}
+.card .icon-box svg{width:78%; height:78%;}
+.card h3{margin:0; font-size:15px; font-weight:700;}
+.card p{margin:2px 0 0; font-size:11px; color:var(--ink-soft); font-weight:500;}
+.card.locked{opacity:.4; filter:grayscale(70%); cursor:not-allowed;}
+.card.active{border-color:var(--part-color); transform:translateY(-2px);}
+.card.active:active{cursor:grabbing; transform:scale(.97);}
+.card.gone{display:none;}
+.card .check{display:none;}
+.card.locked .check{display:inline-block; font-size:16px;}
+
+.case-wrap{display:flex; justify-content:center;}
+.case{
+  position:relative; width:min(420px,92vw); aspect-ratio:3/4;
+  background:linear-gradient(160deg, var(--case), var(--case-2));
+  border-radius:26px; box-shadow:var(--shadow);
+  border:6px solid var(--case-2);
+  overflow:hidden;
+}
+.case::before{ /* power button + vents = face */
+  content:""; position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:34px; height:34px; border-radius:50%;
+  border:4px solid #4a5580; box-shadow:0 0 0 3px transparent;
+}
+.eye{position:absolute; top:9px; width:8px; height:8px; border-radius:50%; background:#4a5580; transition:background .4s;}
+.eye.l{left:calc(50% - 26px);} .eye.r{left:calc(50% + 18px);}
+.case.win .eye{background:#7CF29C;}
+.case.win::before{border-color:#7CF29C;}
+
+.zone{
+  position:absolute; border-radius:10px;
+  border:3px dashed #5a6690; background:rgba(255,255,255,.04);
+  display:flex; align-items:center; justify-content:center;
+  transition:border-color .3s, box-shadow .3s, background .3s, transform .2s;
+}
+.zone .icon-box svg{width:80%; height:80%;}
+.zone.locked{opacity:.28;}
+.zone.active{
+  border-color:var(--part-color); background:rgba(255,255,255,.08);
+  box-shadow:0 0 0 5px color-mix(in srgb, var(--part-color) 25%, transparent);
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse{ 50%{box-shadow:0 0 0 9px color-mix(in srgb, var(--part-color) 15%, transparent);} }
+.zone.filled{border-style:solid; background:var(--part-color);}
+.zone.shake{animation:shake .4s;}
+@keyframes shake{ 20%,60%{transform:translateX(-6px);} 40%,80%{transform:translateX(6px);} }
+.zone.pop{animation:pop .45s cubic-bezier(.3,1.6,.4,1);}
+@keyframes pop{ 0%{transform:scale(.5);} 70%{transform:scale(1.08);} 100%{transform:scale(1);} }
+
+#z-mobo{left:6%; top:6%; width:68%; height:88%;}
+#z-cpu{left:15%; top:15%; width:24%; height:19%;}
+#z-ram{left:44%; top:12%; width:11%; height:42%;}
+#z-gpu{left:12%; top:64%; width:56%; height:15%;}
+#z-hdd{left:80%; top:58%; width:14%; height:24%;}
+
+.drag-ghost{
+  position:fixed; z-index:999; pointer-events:none; width:110px; height:84px;
+  display:flex; align-items:center; justify-content:center;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.35));
+}
+.drag-ghost svg{width:100%; height:100%;}
+
+.toast{
+  position:fixed; left:50%; bottom:24px; transform:translate(-50%,140%);
+  background:var(--card); color:var(--ink); font-weight:700; padding:12px 22px;
+  border-radius:999px; box-shadow:var(--shadow); z-index:50; transition:transform .35s;
+  max-width:90vw; text-align:center;
+}
+.toast.show{transform:translate(-50%,0);}
+
+.win-overlay{
+  position:fixed; inset:0; background:rgba(20,26,46,.55); backdrop-filter:blur(3px);
+  display:flex; align-items:center; justify-content:center; z-index:80;
+  opacity:0; pointer-events:none; transition:opacity .35s;
+}
+.win-overlay.show{opacity:1; pointer-events:auto;}
+.win-card{background:var(--card); border-radius:24px; padding:32px 28px; text-align:center; box-shadow:var(--shadow); max-width:340px;}
+.win-card h2{margin:0 0 6px; font-size:26px;}
+.win-card p{color:var(--ink-soft); font-weight:500; margin:0 0 18px;}
+.btn{
+  background:var(--cpu); color:#fff; border:none; border-radius:999px; padding:12px 26px;
+  font-family:inherit; font-weight:700; font-size:16px; cursor:pointer; box-shadow:0 6px 14px rgba(139,92,246,.4);
+}
+.btn:active{transform:scale(.97);}
+
+.confetti-layer{position:fixed; inset:0; pointer-events:none; z-index:90; overflow:hidden;}
+.confetti{position:absolute; top:-16px; width:9px; height:14px; border-radius:2px;}
+
+.hint{font-size:13px; text-align:center; color:var(--ink-soft); font-weight:600; margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🖥️ Собери компьютер!</h1>
+    <p class="subtitle">Перетащи (или нажми) на нужную деталь и поставь её на правильное место</p>
+    <ol class="steps" id="steps"></ol>
+  </header>
+
+  <main class="stage">
+    <section class="tray" id="tray" aria-label="Детали компьютера"></section>
+    <section class="case-wrap">
+      <div class="case" id="case">
+        <div class="eye l"></div><div class="eye r"></div>
+        <div class="zone" id="z-mobo" data-part="mobo"></div>
+        <div class="zone" id="z-cpu" data-part="cpu"></div>
+        <div class="zone" id="z-ram" data-part="ram"></div>
+        <div class="zone" id="z-gpu" data-part="gpu"></div>
+        <div class="zone" id="z-hdd" data-part="hdd"></div>
+      </div>
+    </section>
+  </main>
+  <p class="hint" id="hint"></p>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="confetti-layer" id="confetti"></div>
+<div class="win-overlay" id="winOverlay">
+  <div class="win-card">
+    <h2>🎉 Ура, готово!</h2>
+    <p>Ты собрал компьютер как настоящий мастер!</p>
+    <button class="btn" id="restartBtn">Собрать ещё раз</button>
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  mobo: `<svg viewBox="0 0 100 100"><rect x="4" y="4" width="92" height="92" rx="10" fill="var(--mobo)" stroke="var(--mobo-d)" stroke-width="4"/>
+    <rect x="16" y="16" width="26" height="26" rx="4" fill="#fff" opacity=".85"/>
+    <rect x="58" y="14" width="10" height="30" rx="2" fill="#fff" opacity=".6"/>
+    <rect x="72" y="14" width="10" height="30" rx="2" fill="#fff" opacity=".6"/>
+    <rect x="16" y="58" width="46" height="14" rx="4" fill="#fff" opacity=".6"/>
+    <circle cx="82" cy="70" r="6" fill="#fff" opacity=".6"/></svg>`,
+  cpu: `<svg viewBox="0 0 100 100"><g>
+    <rect x="8" y="8" width="6" height="10" fill="var(--cpu-d)"/><rect x="8" y="26" width="6" height="10" fill="var(--cpu-d)"/><rect x="8" y="44" width="6" height="10" fill="var(--cpu-d)"/><rect x="8" y="62" width="6" height="10" fill="var(--cpu-d)"/>
+    <rect x="86" y="8" width="6" height="10" fill="var(--cpu-d)"/><rect x="86" y="26" width="6" height="10" fill="var(--cpu-d)"/><rect x="86" y="44" width="6" height="10" fill="var(--cpu-d)"/><rect x="86" y="62" width="6" height="10" fill="var(--cpu-d)"/>
+    <rect x="18" y="18" width="64" height="64" rx="8" fill="var(--cpu)" stroke="var(--cpu-d)" stroke-width="4"/>
+    <rect x="34" y="34" width="32" height="32" rx="4" fill="#fff" opacity=".85"/>
+  </g></svg>`,
+  ram: `<svg viewBox="0 0 100 100"><rect x="26" y="4" width="48" height="88" rx="8" fill="var(--ram)" stroke="var(--ram-d)" stroke-width="4"/>
+    <rect x="36" y="16" width="28" height="6" rx="2" fill="#fff" opacity=".8"/>
+    <rect x="36" y="28" width="28" height="6" rx="2" fill="#fff" opacity=".8"/>
+    <rect x="36" y="40" width="28" height="6" rx="2" fill="#fff" opacity=".8"/>
+    <rect x="26" y="80" width="48" height="10" fill="var(--ram-d)"/></svg>`,
+  gpu: `<svg viewBox="0 0 100 100"><rect x="4" y="26" width="92" height="46" rx="10" fill="var(--gpu)" stroke="var(--gpu-d)" stroke-width="4"/>
+    <circle cx="30" cy="49" r="14" fill="#fff" opacity=".85"/><circle cx="30" cy="49" r="5" fill="var(--gpu-d)"/>
+    <circle cx="68" cy="49" r="14" fill="#fff" opacity=".85"/><circle cx="68" cy="49" r="5" fill="var(--gpu-d)"/>
+    <rect x="4" y="76" width="20" height="8" fill="var(--gpu-d)"/></svg>`,
+  hdd: `<svg viewBox="0 0 100 100"><rect x="8" y="14" width="84" height="72" rx="8" fill="var(--hdd)" stroke="var(--hdd-d)" stroke-width="4"/>
+    <circle cx="34" cy="50" r="20" fill="#fff" opacity=".85"/><circle cx="34" cy="50" r="6" fill="var(--hdd-d)"/>
+    <rect x="64" y="26" width="18" height="6" rx="2" fill="#fff" opacity=".7"/>
+    <rect x="64" y="38" width="18" height="6" rx="2" fill="#fff" opacity=".7"/></svg>`
+};
+
+const PARTS = [
+  {id:'mobo', name:'Материнская плата', short:'Плата', color:'var(--mobo)', tip:'Главная основа — на неё крепится всё остальное.'},
+  {id:'cpu',  name:'Процессор',          short:'Процессор', color:'var(--cpu)',  tip:'«Мозг» компьютера — вставляется в центр платы.'},
+  {id:'ram',  name:'Оперативная память', short:'ОЗУ', color:'var(--ram)',  tip:'Быстрая память — вставляется в узкие слоты.'},
+  {id:'gpu',  name:'Видеокарта',         short:'Видеокарта', color:'var(--gpu)',  tip:'Рисует картинку — вставляется в длинный разъём снизу.'},
+  {id:'hdd',  name:'Жёсткий диск',       short:'Диск', color:'var(--hdd)',  tip:'Хранит файлы — ставится в отдельный отсек.'},
+];
+
+let current = 0;
+const trayEl = document.getElementById('tray');
+const stepsEl = document.getElementById('steps');
+const hintEl = document.getElementById('hint');
+const toastEl = document.getElementById('toast');
+const caseEl = document.getElementById('case');
+const winOverlay = document.getElementById('winOverlay');
+
+function buildTray(){
+  trayEl.innerHTML = '';
+  PARTS.forEach((p,i)=>{
+    const card = document.createElement('div');
+    card.className = 'card locked';
+    card.id = 'card-'+p.id;
+    card.style.setProperty('--part-color', p.color);
+    card.innerHTML = `<div class="icon-box">${ICONS[p.id]}</div><h3>${p.short}<span class="check"> ✅</span></h3><p>${p.tip}</p>`;
+    trayEl.appendChild(card);
+  });
+}
+function buildSteps(){
+  stepsEl.innerHTML = '';
+  PARTS.forEach((p,i)=>{
+    const li = document.createElement('li');
+    li.className = 'step';
+    li.id = 'step-'+p.id;
+    li.style.setProperty('--part-color', p.color);
+    li.innerHTML = `<span class="dot">${i+1}</span>${p.short}`;
+    stepsEl.appendChild(li);
+  });
+}
+function refreshUI(){
+  PARTS.forEach((p,i)=>{
+    const card = document.getElementById('card-'+p.id);
+    const step = document.getElementById('step-'+p.id);
+    const zone = document.getElementById('z-'+p.id);
+    card.classList.remove('locked','active','gone');
+    step.classList.remove('active','done');
+    zone.classList.remove('locked','active');
+    if(i < current){ card.classList.add('gone'); step.classList.add('done'); }
+    else if(i === current){ card.classList.add('active'); step.classList.add('active'); zone.classList.add('active'); }
+    else { card.classList.add('locked'); zone.classList.add('locked'); }
+  });
+  if(current < PARTS.length){
+    hintEl.textContent = 'Шаг ' + (current+1) + ' из ' + PARTS.length + ': перетащи «' + PARTS[current].name + '» на нужное место в системном блоке.';
+  } else {
+    hintEl.textContent = '';
+  }
+}
+buildTray(); buildSteps(); refreshUI();
+
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>toastEl.classList.remove('show'), 1700);
+}
+
+let audioCtx;
+function beep(freqs, dur=0.11){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    let t = audioCtx.currentTime;
+    freqs.forEach((f,i)=>{
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.001,t); g.gain.exponentialRampToValueAtTime(0.15, t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t+dur+0.02);
+      t += dur*0.55;
+    });
+  }catch(e){}
+}
+const successSound = ()=>beep([523,659,784]);
+const winSound = ()=>beep([523,659,784,1046]);
+const failSound = ()=>beep([220,175]);
+
+function placePart(partIdx){
+  const p = PARTS[partIdx];
+  const zone = document.getElementById('z-'+p.id);
+  zone.classList.remove('locked','active');
+  zone.classList.add('filled','pop');
+  zone.style.setProperty('--part-color', p.color);
+  zone.innerHTML = `<div class="icon-box">${ICONS[p.id]}</div>`;
+  setTimeout(()=>zone.classList.remove('pop'), 460);
+  successSound();
+  showToast('Отлично! «' + p.name + '» на месте ✔');
+  current++;
+  refreshUI();
+  if(current === PARTS.length){
+    setTimeout(win, 500);
+  }
+}
+function failDrop(zone){
+  zone.classList.add('shake');
+  setTimeout(()=>zone.classList.remove('shake'), 420);
+  failSound();
+  showToast('Не сюда! Попробуй другое место 🙂');
+}
+
+function win(){
+  caseEl.classList.add('win');
+  winSound();
+  winOverlay.classList.add('show');
+  burstConfetti();
+}
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  current = 0;
+  caseEl.classList.remove('win');
+  winOverlay.classList.remove('show');
+  document.querySelectorAll('.zone').forEach(z=>{
+    z.classList.remove('filled');
+    z.innerHTML = '';
+  });
+  buildTray();
+  refreshUI();
+});
+
+function burstConfetti(){
+  const layer = document.getElementById('confetti');
+  const colors = ['#4caf7d','#8b5cf6','#ffc93c','#ef476f','#06aed5'];
+  for(let i=0;i<60;i++){
+    const el = document.createElement('div');
+    el.className='confetti';
+    el.style.left = Math.random()*100+'vw';
+    el.style.background = colors[i%colors.length];
+    el.style.transform = 'rotate('+(Math.random()*360)+'deg)';
+    const dur = 1.6+Math.random()*1.4;
+    el.style.transition = 'transform '+dur+'s linear, top '+dur+'s ease-in';
+    layer.appendChild(el);
+    requestAnimationFrame(()=>{
+      el.style.top = '108vh';
+      el.style.transform += ' rotate('+(Math.random()*720-360)+'deg)';
+    });
+    setTimeout(()=>el.remove(), dur*1000+200);
+  }
+}
+
+/* ---- Drag & drop (pointer events, mouse+touch) + click-to-place fallback ---- */
+let dragState = null;
+
+trayEl.addEventListener('pointerdown', (e)=>{
+  const card = e.target.closest('.card.active');
+  if(!card) return;
+  const idx = current;
+  const p = PARTS[idx];
+  e.preventDefault();
+  const ghost = document.createElement('div');
+  ghost.className = 'drag-ghost';
+  ghost.innerHTML = ICONS[p.id];
+  document.body.appendChild(ghost);
+  moveGhost(ghost, e.clientX, e.clientY);
+  card.style.opacity = '0.35';
+  dragState = {card, ghost, idx, moved:false};
+  card.setPointerCapture && card.setPointerCapture(e.pointerId);
+});
+window.addEventListener('pointermove', (e)=>{
+  if(!dragState) return;
+  dragState.moved = true;
+  moveGhost(dragState.ghost, e.clientX, e.clientY);
+});
+window.addEventListener('pointerup', (e)=>{
+  if(!dragState) return;
+  const {card, ghost, idx, moved} = dragState;
+  ghost.remove();
+  card.style.opacity = '';
+  dragState = null;
+  if(!moved) return; // treat as a click, handled separately
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  const zone = target && target.closest('.zone');
+  handleDrop(zone, idx);
+});
+function moveGhost(el,x,y){
+  el.style.left = (x-55)+'px';
+  el.style.top = (y-42)+'px';
+}
+trayEl.addEventListener('click', (e)=>{
+  const card = e.target.closest('.card.active');
+  if(!card) return;
+  // click / tap fallback: place directly into its own (correct) zone
+  placePart(current);
+});
+function handleDrop(zone, idx){
+  if(!zone){ return; }
+  const p = PARTS[idx];
+  if(zone.dataset.part === p.id && idx === current){
+    placePart(idx);
+  } else {
+    failDrop(zone);
+  }
+}
+</script>
+</body>
+</html>
