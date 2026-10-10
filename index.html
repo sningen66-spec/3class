@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Промежуточное оценивание, 1 четверть — Цифровая грамотность и ИИ, 3 класс</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef5ff;--card:#fff;--tx:#1d2b45;--ac:#2f6fed;--ok:#1a9a4a;--bad:#d83a3a;--bd:#c9d8f2}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a2b;--card:#1c2742;--tx:#e8eefc;--ac:#6c9bff;--ok:#4cd17f;--bad:#ff7b7b;--bd:#34466e}}
+:root[data-theme="dark"]{--bg:#121a2b;--card:#1c2742;--tx:#e8eefc;--ac:#6c9bff;--ok:#4cd17f;--bad:#ff7b7b;--bd:#34466e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Trebuchet MS",Verdana,sans-serif;font-size:18px;line-height:1.5;
+-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+.wrap{max-width:820px;margin:0 auto;padding:16px}
+header{background:var(--ac);color:#fff;border-radius:16px;padding:16px 20px}
+header h1{margin:0 0 6px;font-size:1.3rem}
+header p{margin:2px 0;font-size:.95rem}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:16px;padding:16px 20px;margin:16px 0}
+.card h2{margin:0 0 4px;font-size:1.15rem}
+.goal{font-size:.85rem;opacity:.8;margin:0 0 10px}
+.pts{float:right;background:var(--ac);color:#fff;border-radius:20px;padding:0 12px;font-size:.9rem}
+.q{margin:12px 0;padding-bottom:8px;border-bottom:1px dashed var(--bd)}
+label.o{display:block;padding:6px 8px;border-radius:8px;cursor:pointer}
+label.o:hover{background:var(--bg)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.row b{min-width:170px}
+select,input[type=text],textarea{font:inherit;color:var(--tx);background:var(--bg);border:2px solid var(--bd);border-radius:10px;padding:6px 10px;max-width:100%}
+input[type=text]{width:100%}
+textarea{width:100%;min-height:80px}
+select{flex:1;min-width:200px}
+button{font:inherit;background:var(--ac);color:#fff;border:0;border-radius:12px;padding:10px 24px;cursor:pointer}
+.warn{display:none;background:var(--bad);color:#fff;border-radius:10px;padding:6px 12px;margin:6px 0;font-size:.9rem}
+.target{background:var(--bg);border-left:5px solid var(--ac);padding:6px 12px;border-radius:6px;margin:6px 0;font-family:"Courier New",monospace}
+.res{display:none;text-align:center}
+.big{font-size:2.4rem;font-weight:bold;color:var(--ac)}
+.fb{font-size:.9rem;margin-top:4px}
+.good{color:var(--ok)}.wrong{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:8px}
+td,th{border:1px solid var(--bd);padding:4px 8px;text-align:left}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>🖥️ Цифровая грамотность и искусственный интеллект — 3 класс</h1>
+<p>Промежуточное оценивание за 1 четверть · Максимум: <b>14 баллов</b></p>
+<p>⚠️ Копировать и вставлять нельзя: всё нужно набирать самому на клавиатуре!</p>
+</header>
+
+<div class="card">
+<div class="row"><b>Имя и фамилия:</b><input type="text" id="nm" maxlength="40" autocomplete="off" placeholder="Набери свои имя и фамилию"></div>
+</div>
+
+<!-- Задание 1 -->
+<div class="card" id="t1">
+<h2>Задание 1. Безопасное общение в сети <span class="pts">4 балла</span></h2>
+<p class="goal">3.3.2.1 Следовать основным этическим и правовым нормам при работе в сети Интернет</p>
+</div>
+
+<!-- Задание 2 -->
+<div class="card" id="t2">
+<h2>Задание 2. Устройства компьютера <span class="pts">4 балла</span></h2>
+<p class="goal">3.1.1.1 Объяснять назначение внутренних устройств компьютера</p>
+<p>Выбери назначение для каждого устройства.</p>
+</div>
+
+<!-- Задание 3 -->
+<div class="card" id="t4">
+<h2>Задание 3. Ввод и редактирование текста <span class="pts">6 баллов</span></h2>
+<p class="goal">3.2.1.1 Следовать правилам набора и редактирования текста (смена регистра, раскладки, управление курсором)</p>
+<div class="q">
+<b>3а (3 балла).</b> Набери предложение точно как в образце. Используй <b>Shift</b> или <b>Caps Lock</b> для заглавных букв и клавиши <b>Alt+Shift</b> (или <b>Ctrl+Shift</b>) для смены раскладки.
+<div class="target">Привет, Алия! Мой сайт: Kids.kz</div>
+<input type="text" id="a4" autocomplete="off" autocapitalize="off" spellcheck="false">
+</div>
+<div class="q" style="border:0">
+<b>3б (3 балла).</b> В тексте ниже три ошибки. Исправь их, двигая курсор стрелками, клавишами <b>Home</b>, <b>End</b>, <b>Backspace</b>, <b>Delete</b>.
+<div class="target">Образец: Мой компьютер имеет процессор и память.</div>
+<textarea id="b4" spellcheck="false">мой Компьютер имеет прцессор и память.</textarea>
+</div>
+<div class="warn" id="warn">🚫 Копировать, вырезать и вставлять нельзя! Набирай текст сам.</div>
+</div>
+
+<div style="text-align:center"><button id="go">Завершить и узнать результат</button></div>
+
+<div class="card res" id="res">
+<div>Результат: <span class="big" id="tot">0</span> из 14</div>
+<p id="mark"></p>
+<table id="tbl"></table>
+<p id="svmsg" class="fb"></p>
+<button id="sv" type="button">💾 Сохранить результат на компьютер</button>
+</div>
+</div>
+
+<script>
+// ---------- Данные ----------
+var T1=[
+{q:"1. Незнакомый человек в чате просит твой домашний адрес и фото. Что ты сделаешь?",o:["Отправлю, он же вежливый","Не буду отвечать и расскажу взрослым","Отправлю только фото"],a:1},
+{q:"2. Как правильно обращаться с паролем от своей страницы?",o:["Скажу пароль другу","Запишу пароль на открытом сайте","Придумаю сложный пароль и скажу только родителям"],a:2},
+{q:"3. Как нужно вести себя в классном чате?",o:["Писать вежливо и не обижать других","Выкладывать чужие фото без разрешения","Писать грубые шутки"],a:0},
+{q:"4. Ты нашёл в интернете картинку для своего проекта. Как поступить правильно?",o:["Взять и сказать, что нарисовал сам","Указать, откуда взята картинка","Скачать любые картинки, не проверяя"],a:1}];
+var T2=[
+["Процессор","выполняет команды и обрабатывает данные"],
+["Оперативная память","временно хранит данные работающих программ"],
+["Жёсткий диск или SSD","постоянно хранит файлы и программы"],
+["Видеокарта","создаёт изображение для монитора"],
+["Материнская плата","соединяет все устройства компьютера"]];
+
+// ---------- Построение ----------
+function el(h){var d=document.createElement('div');d.innerHTML=h;return d.firstChild}
+T1.forEach(function(t,i){
+ var h='<div class="q"><b>'+t.q+'</b>';
+ t.o.forEach(function(o,j){h+='<label class="o"><input type="radio" name="q1_'+i+'" value="'+j+'"> '+o+'</label>'});
+ document.getElementById('t1').appendChild(el(h+'</div>'));
+});
+var shuf=T2.map(function(x){return x[1]}).sort(function(a,b){return a<b?-1:1});
+T2.forEach(function(t,i){
+ var h='<div class="row"><b>'+t[0]+'</b><select id="s2_'+i+'"><option value="">— выбери —</option>';
+ shuf.forEach(function(s){h+='<option>'+s+'</option>'});
+ document.getElementById('t2').appendChild(el(h+'</select></div>'));
+});
+
+// ---------- Запрет буфера обмена ----------
+var w=document.getElementById('warn'),tm;
+function block(e){e.preventDefault();e.stopPropagation();w.style.display='block';clearTimeout(tm);tm=setTimeout(function(){w.style.display='none'},2500)}
+['paste','copy','cut','drop','dragstart','contextmenu'].forEach(function(ev){document.addEventListener(ev,block,true)});
+document.addEventListener('keydown',function(e){
+ var k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;
+ if((c&&['v','c','x','insert','м','с','ч'].indexOf(k)>-1)||(e.shiftKey&&(k==='insert'||k==='delete'))||(c&&k==='insert')) block(e);
+},true);
+document.addEventListener('beforeinput',function(e){
+ if(/paste|drop|historyUndo|historyRedo/i.test(e.inputType||'')) block(e);
+ // защита от вставки целого текста через ввод (автоподстановка)
+ if(e.inputType==='insertText'&&e.data&&e.data.length>1) block(e);
+},true);
+document.querySelectorAll('input[type=text],textarea').forEach(function(i){i.setAttribute('autocomplete','off')});
+
+// ---------- Проверка ----------
+function lvl(c,n){return c>=n?3:(c>=Math.ceil(n*2/3)?2:(c>=Math.ceil(n/3)?1:0))}
+document.getElementById('go').onclick=function(){
+ if(!document.getElementById('nm').value.trim()){alert('Набери своё имя!');return}
+ var rows=[],sum=0;
+ // 1
+ var c1=0;T1.forEach(function(t,i){var r=document.querySelector('input[name=q1_'+i+']:checked');if(r&&+r.value===t.a)c1++});
+ sum+=c1;rows.push(['Задание 1. Безопасное общение','3.3.2.1',c1,4]);
+ // 2
+ var c2=0;T2.forEach(function(t,i){if(document.getElementById('s2_'+i).value===t[1])c2++});
+ var p2=Math.max(0,c2-1);sum+=p2;rows.push(['Задание 2. Устройства ('+c2+' из 5 верно)','3.1.1.1',p2,4]);
+ // 4а
+ var v=document.getElementById('a4').value.trim(),t4="Привет, Алия! Мой сайт: Kids.kz",p4a=0;
+ if(v===t4)p4a=3;else if(v.toLowerCase()===t4.toLowerCase()||v.replace(/\s+/g,' ').toLowerCase()===t4.toLowerCase())p4a=1;
+ // 4б
+ var b=document.getElementById('b4').value.trim(),p4b=0;
+ if(/^Мой /.test(b))p4b++;
+ if(b.indexOf('компьютер')>-1&&b.indexOf('Компьютер')<0)p4b++;
+ if(b.indexOf('процессор')>-1)p4b++;
+ sum+=p4a+p4b;rows.push(['Задание 3. Ввод и редактирование текста (3а: '+p4a+', 3б: '+p4b+')','3.2.1.1',p4a+p4b,6]);
+ // вывод
+ var h='<tr><th>Задание</th><th>Цель</th><th>Баллы</th></tr>';
+ rows.forEach(function(r){h+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+' / '+r[3]+'</td></tr>'});
+ document.getElementById('tbl').innerHTML=h;
+ document.getElementById('tot').textContent=sum;
+ var pr=sum/14*100,m=pr>=85?'🌟 Отлично! Ты настоящий знаток цифрового мира!':pr>=65?'👍 Хорошо! Повтори немного и будет отлично.':pr>=40?'🙂 Неплохо. Повтори темы и попробуй ещё раз.':'📘 Нужно повторить темы. У тебя всё получится!';
+ document.getElementById('mark').innerHTML='<b>'+document.getElementById('nm').value.trim()+'</b>, '+m;
+ var r=document.getElementById('res');r.style.display='block';r.scrollIntoView({behavior:'smooth'});
+ this.disabled=true;
+ RES={name:document.getElementById('nm').value.trim(),c1:c1,c2:c2,p2:p2,p4a:p4a,p4b:p4b,sum:sum,pr:Math.round(pr)};
+ saveResult();
+};
+
+// ---------- Сохранение результатов на компьютер (файл CSV, открывается в Excel) ----------
+var RES=null;
+function csvCell(s){s=String(s);if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'}
+async function saveResult(){
+ if(!RES)return;
+ var m=document.getElementById('svmsg');
+ var nm=RES.name.replace(/[^A-Za-z0-9А-Яа-яЁё_ -]/g,'').trim().replace(/\s+/g,'_')||'ученик';
+ var fn='Результат_'+nm+'.csv';
+ var head=['Имя и фамилия','Дата и время','Задание 1 (из 4)','Задание 2: верно устройств (из 5)','Задание 2 (из 4)','Задание 3а (из 3)','Задание 3б (из 3)','Итого (из 14)','Процент'];
+ var row=[RES.name,new Date().toLocaleString('ru-RU'),RES.c1,RES.c2,RES.p2,RES.p4a,RES.p4b,RES.sum,RES.pr+'%'];
+ var csv='\uFEFF'+head.map(csvCell).join(';')+'\r\n'+row.map(csvCell).join(';')+'\r\n';
+ try{
+  var d=window.claude&&claude.use?await claude.use('downloads'):null;
+  if(d){await d.save({filename:fn,data:csv});m.textContent='✅ Результат сохранён в файл: '+fn;return}
+ }catch(e){
+  if(e&&e.code==='declined'){m.textContent='Сохранение отменено. Нажми кнопку «Сохранить», чтобы повторить.';return}
+ }
+ // Обычный браузер (файл открыт с компьютера)
+ try{
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=fn;document.body.appendChild(a);a.click();a.remove();
+  m.textContent='✅ Результат сохранён в папку «Загрузки»: '+fn;
+ }catch(e){m.textContent='⚠️ Не удалось сохранить файл. Сделай фото или скриншот результата.'}
+}
+document.getElementById('sv').onclick=saveResult;
+</script>
+</body>
+</html>
