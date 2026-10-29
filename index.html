@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Циклы в Scratch — тренажёр</title>
+<style>
+/* ====================== СТИЛИ ====================== */
+:root{
+  --motion:#4C97FF; --motion-d:#3373CC;
+  --control:#FFAB19; --control-d:#CF8B17;
+  --looks:#9966FF; --looks-d:#774DCB;
+  --event:#FFBF00;
+  --ink:#4D4D6B; --bg:#F3F0FF; --card:#fff;
+  --ok:#59C059; --bad:#FF6680;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif;
+  color:var(--ink);
+  background:var(--bg) radial-gradient(circle at 12% 18%,#E6DDFF 0 90px,transparent 91px),
+             radial-gradient(circle at 92% 80%,#DCEBFF 0 130px,transparent 131px);
+  min-height:100vh; font-size:clamp(17px,2.1vw,22px);
+}
+.app{max-width:1000px;margin:0 auto;padding:14px 16px 40px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.logo{font-size:2.2em;animation:bob 2.2s ease-in-out infinite}
+h1{margin:0;font-size:1.5em;color:var(--looks-d);flex:1;min-width:200px}
+.restart-top{font-size:.8em}
+.progress{display:flex;gap:10px;margin-bottom:14px}
+.dot{flex:1;height:16px;border-radius:10px;background:#D9D3F0;position:relative;transition:.4s}
+.dot.done{background:var(--ok)} .dot.now{background:var(--control)}
+.dot.now::after{content:"🐱";position:absolute;right:-4px;top:-22px;font-size:20px}
+.card{background:var(--card);border-radius:26px;padding:22px;box-shadow:0 6px 0 #D2C8F5;border:4px solid #E4DCFF}
+.card.enter{animation:pop .45s ease-out}
+.task-title{display:flex;align-items:center;gap:12px;margin:0 0 6px;font-size:1.45em;color:var(--motion-d)}
+.task-title .n{background:var(--control);color:#fff;border-radius:50%;width:2em;height:2em;display:grid;place-items:center;flex:none}
+.q{margin:6px 0 16px;font-size:1.05em;line-height:1.4}
+
+/* ---------- блоки Scratch ---------- */
+.script{display:inline-block;text-align:left;vertical-align:top}
+.b{display:block;padding:8px 14px;color:#fff;font-weight:700;border-radius:8px;margin-bottom:2px;
+   box-shadow:inset 0 -3px 0 rgba(0,0,0,.18);white-space:nowrap;font-size:.95em;line-height:1.3}
+.b i{font-style:normal;background:#fff;color:var(--ink);border-radius:14px;padding:0 10px;margin:0 3px;display:inline-block;min-width:1.6em;text-align:center}
+.mo{background:var(--motion)} .ct{background:var(--control)} .lk{background:var(--looks)} .ev{background:var(--event);border-radius:20px 20px 8px 8px;padding-top:12px}
+.c .ct{border-radius:8px 8px 0 0;margin-bottom:0}
+.c .in{margin-left:0;padding:4px 0 2px 22px;background:var(--control);}
+.c .in .b{margin-bottom:2px}
+.c .cb{height:20px;background:var(--control);border-radius:0 0 8px 8px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.tag{font-size:.8em;font-weight:700;margin:0 0 8px;text-align:center}
+
+/* ---------- варианты ---------- */
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.opt{border:4px solid #E4DCFF;background:#FAF8FF;border-radius:22px;padding:14px;cursor:pointer;text-align:center;
+     font:inherit;color:inherit;transition:transform .15s,border-color .15s}
+.opt:hover{transform:translateY(-4px);border-color:var(--looks)}
+.opt:focus-visible,.btn:focus-visible,.piece:focus-visible,.slot:focus-visible{outline:4px solid var(--motion);outline-offset:3px}
+.opt.right{border-color:var(--ok);background:#E9F8E9}
+.opt.wrong{border-color:var(--bad);animation:shake .4s}
+.opt .scroll{max-height:330px;overflow:auto;padding:4px}
+.nums{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.num{font:inherit;font-size:1.9em;font-weight:800;min-width:110px;padding:14px 20px;border-radius:22px;border:none;cursor:pointer;
+     color:#fff;background:var(--looks);box-shadow:0 6px 0 var(--looks-d);transition:transform .12s}
+.num:hover{transform:translateY(-3px)} .num:active{transform:translateY(4px);box-shadow:0 2px 0 var(--looks-d)}
+.num.right{background:var(--ok);box-shadow:0 6px 0 #3E9A3E} .num.wrong{background:var(--bad);box-shadow:0 6px 0 #CC4A62;animation:shake .4s}
+.num:disabled{cursor:default;opacity:.85}
+.row{display:flex;gap:24px;flex-wrap:wrap;align-items:center;justify-content:center}
+.stage{background:#fff;border:4px solid #CFE0FF;border-radius:18px;padding:12px 18px;text-align:center;min-width:190px}
+.cat{font-size:4.2em;display:inline-block;transition:transform .5s}
+.track{font-size:.8em;color:var(--ink);margin-top:4px}
+
+/* ---------- пазл ---------- */
+.puzzle{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.tray{background:#F3F8FF;border:4px dashed #BBD3FF;border-radius:20px;padding:14px;min-width:240px;min-height:200px}
+.piece{display:block;margin:10px 0;cursor:grab;border:3px solid transparent;border-radius:12px;background:none;padding:0;font:inherit;text-align:left}
+.piece.sel{border-color:var(--ink);animation:wiggle .5s infinite}
+.piece.used{opacity:.25;pointer-events:none}
+.slot{min-height:46px;min-width:250px;border:3px dashed #B9A9F0;border-radius:10px;margin:3px 0;padding:2px;display:flex;align-items:center;justify-content:center;
+      color:#9A8DCB;font-size:.8em;font-weight:700;cursor:pointer;background:#FBFAFF;text-align:center}
+.slot.over{background:#EDE6FF;border-color:var(--looks)}
+.slot.filled{border:none;background:none;padding:0;display:block}
+.slot.filled .b{margin:0;border-radius:8px}
+.inner{padding-left:26px;background:var(--control);padding-top:3px;padding-bottom:3px;border-left:0}
+.cap{height:20px;background:var(--control);border-radius:0 0 8px 8px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.hint{font-size:.8em;margin-top:10px;opacity:.85}
+
+/* ---------- кнопки и отзыв ---------- */
+.btn{font:inherit;font-weight:800;font-size:1.1em;border:none;border-radius:40px;padding:14px 30px;cursor:pointer;color:#fff;
+     background:var(--control);box-shadow:0 6px 0 var(--control-d);transition:transform .12s}
+.btn:hover{transform:translateY(-3px)} .btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--control-d)}
+.btn.blue{background:var(--motion);box-shadow:0 6px 0 var(--motion-d)}
+.btn.purple{background:var(--looks);box-shadow:0 6px 0 var(--looks-d)}
+.btn.green{background:var(--ok);box-shadow:0 6px 0 #3E9A3E}
+.actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.fb{margin-top:16px;border-radius:20px;padding:12px 18px;font-weight:700;display:none;align-items:center;gap:12px;line-height:1.35}
+.fb.show{display:flex;animation:pop .35s ease-out}
+.fb .em{font-size:2em}
+.fb.good{background:#E6F7E6;color:#2C7A2C} .fb.try{background:#FFF0F3;color:#B53B55} .fb.info{background:#FFF6DC;color:#8A6200}
+
+/* ---------- итоги ---------- */
+.result{text-align:center}
+.stars{font-size:4em;letter-spacing:6px}
+.stars span{display:inline-block;filter:grayscale(1);opacity:.35;transform:scale(.6)}
+.stars span.on{filter:none;opacity:1;animation:starIn .6s ease-out forwards;transform:scale(1)}
+.big-face{font-size:5em;animation:bob 1.6s ease-in-out infinite}
+.result h2{color:var(--looks-d);margin:8px 0}
+.sum{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.sum div{padding:8px 16px;border-radius:16px;font-weight:700;background:#F0EBFF}
+.sum .ok{background:#E6F7E6} .sum .no{background:#FFF0F3}
+
+@keyframes bob{50%{transform:translateY(-8px) rotate(4deg)}}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes wiggle{50%{transform:rotate(-2deg)}}
+@keyframes starIn{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.3) rotate(10deg)}100%{transform:scale(1)}}
+@media (max-width:640px){.card{padding:14px}.b{font-size:.85em}.slot{min-width:210px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">🐱</div>
+    <h1>Циклы в Scratch: тренажёр</h1>
+    <button class="btn purple restart-top" id="restartTop">🔄 Начать сначала</button>
+  </header>
+  <div class="progress" id="progress"></div>
+  <main class="card" id="card" aria-live="polite"></main>
+</div>
+
+<script>
+/* ====================== ЛОГИКА ====================== */
+
+/* --- помощники для рисования блоков --- */
+const mv   = n => `<div class="b mo">идти <i>${n}</i> шагов</div>`;
+const turn = n => `<div class="b mo">повернуть ↻ на <i>${n}</i> градусов</div>`;
+const nextCostume = () => `<div class="b lk">следующий костюм</div>`;
+const wait = n => `<div class="b ct">ждать <i>${n}</i> сек.</div>`;
+const hat  = () => `<div class="b ev">когда 🏁 нажат</div>`;
+const loop = (n, inner) =>
+  `<div class="c"><div class="b ct">повторить <i>${n}</i> раз</div><div class="in">${inner}</div><div class="cb"></div></div>`;
+const script = html => `<div class="script">${hat()}${html}</div>`;
+
+/* --- состояние --- */
+const TOTAL = 4;
+let step = 0;                 // номер задания 0..3
+let firstTry = [];            // true, если ответил с первого раза
+let attempts = 0;             // попыток в текущем задании
+
+const card = document.getElementById('card');
+const progress = document.getElementById('progress');
+
+const cheers = ['Ура! 🎉','Класс! ⭐','Молодец! 👏','Так держать! 🚀'];
+const softs  = ['Почти! Попробуй ещё раз 💪','Ничего страшного, у тебя получится! 🌈','Подумай ещё чуть-чуть, ты справишься! 😊'];
+const pick = a => a[Math.floor(Math.random()*a.length)];
+
+function renderProgress(){
+  progress.innerHTML = '';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i<step?' done':i===step?' now':'');
+    progress.appendChild(d);
+  }
+}
+function feedback(kind, emoji, text){
+  const f=document.getElementById('fb');
+  f.className='fb show '+kind;
+  f.innerHTML=`<span class="em">${emoji}</span><span>${text}</span>`;
+}
+function nextButton(){
+  const a=document.getElementById('actions');
+  const last = step===TOTAL-1;
+  a.innerHTML=`<button class="btn green" id="nextBtn">${last?'Узнать результат 🏆':'Дальше ➡️'}</button>`;
+  document.getElementById('nextBtn').onclick=()=>{ step++; show(); };
+}
+function done(ok){               // фиксируем результат задания
+  if(firstTry[step]===undefined) firstTry[step]=ok&&attempts===0;
+}
+function wrap(n, title, question, body){
+  card.className='card enter';
+  card.innerHTML=`
+    <h2 class="task-title"><span class="n">${n}</span>${title}</h2>
+    <p class="q">${question}</p>
+    ${body}
+    <div class="fb" id="fb"></div>
+    <div class="actions" id="actions"></div>`;
+  void card.offsetWidth;
+}
+
+/* ---------- ЗАДАНИЕ 1: найди ошибку ---------- */
+function task1(){
+  const long = script(mv(10).repeat(10));
+  const short = script(loop(10, mv(10)));
+  const opts = [{html:long,ok:false},{html:short,ok:true}];
+  if(Math.random()<.5) opts.reverse();
+  wrap(1,'Найди ошибку в коде 🔍',
+    'Оба скрипта заставляют кота пройти 100 шагов. Но один из них слишком длинный и неудобный. Нажми на <b>правильный и умный</b> скрипт!',
+    `<div class="choices">${opts.map((o,i)=>`
+      <button class="opt" data-i="${i}"><p class="tag">${o.ok?'🅰️ Скрипт':'🅱️ Скрипт'}</p><div class="scroll">${o.html}</div></button>`).join('')}</div>`);
+  card.querySelectorAll('.opt').forEach(btn=>{
+    btn.onclick=()=>{
+      const o=opts[btn.dataset.i];
+      if(o.ok){
+        btn.classList.add('right');
+        card.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+        done(true);
+        feedback('good','🎉',`${pick(cheers)} Цикл <b>повторить</b> заменил 10 одинаковых блоков одним. Короче, понятнее и быстрее!`);
+        nextButton();
+      }else{
+        btn.classList.remove('wrong'); void btn.offsetWidth; btn.classList.add('wrong');
+        done(false); attempts++;
+        feedback('try','🤔',`${pick(softs)} Подсказка: ищи оранжевый блок «повторить».`);
+      }
+    };
+  });
+}
+
+/* ---------- ЗАДАНИЕ 2: сколько шагов ---------- */
+function task2(){
+  const answer=50;
+  wrap(2,'Сколько шагов сделает кот? 🐾',
+    'Посмотри на скрипт. Сколько всего шагов пройдёт кот, когда мы нажмём на зелёный флажок?',
+    `<div class="row">
+       ${script(loop(5, mv(10)))}
+       <div class="stage"><div class="cat" id="cat">🐱</div><div class="track">Кот ждёт на старте</div></div>
+     </div>
+     <div class="nums">${[10,15,50,5].map(n=>`<button class="num" data-n="${n}">${n}</button>`).join('')}</div>`);
+  card.querySelectorAll('.num').forEach(btn=>{
+    btn.onclick=()=>{
+      if(+btn.dataset.n===answer){
+        btn.classList.add('right');
+        card.querySelectorAll('.num').forEach(b=>b.disabled=true);
+        done(true);
+        const cat=document.getElementById('cat'); cat.style.transform='translateX(60px)';
+        feedback('good','🐱',`${pick(cheers)} Кот делает 10 шагов, и так 5 раз: 10 + 10 + 10 + 10 + 10 = <b>50</b> шагов.`);
+        nextButton();
+      }else{
+        btn.classList.remove('wrong'); void btn.offsetWidth; btn.classList.add('wrong');
+        done(false); attempts++;
+        feedback('try','💡',`${pick(softs)} Цикл повторяет блок несколько раз. Сколько раз? И сколько шагов в каждом?`);
+      }
+    };
+  });
+}
+
+/* ---------- ЗАДАНИЕ 3: собери пазл ---------- */
+function task3(){
+  const defs={
+    rep:{html:`<div class="b ct">повторить <i>4</i> раз</div>`},
+    mov:{html:mv(10)},
+    trn:{html:turn(90)}
+  };
+  const need=['rep','mov','trn'];
+  let slots=[null,null,null], selected=null;
+  const order=['trn','rep','mov'];           // перемешанный порядок в «лотке»
+
+  wrap(3,'Собери пазл цикла 🧩',
+    'Хотим, чтобы кот нарисовал <b>квадрат</b>: 4 раза пройти вперёд и повернуть. Перетащи блоки (или нажми на блок, а потом на пустое место), чтобы собрать цикл: <b>оранжевый</b> блок сверху, а <b>синие</b> внутри.',
+    `<div class="puzzle">
+       <div class="tray" id="tray"><p class="tag">🧰 Блоки</p></div>
+       <div class="script" id="build"></div>
+     </div>
+     <p class="hint">Если ошибся — нажми на блок в скрипте, и он вернётся назад.</p>`);
+  document.getElementById('actions').innerHTML=`<button class="btn blue" id="checkBtn">Проверить ✅</button>`;
+
+  function draw(){
+    const tray=document.getElementById('tray');
+    tray.innerHTML='<p class="tag">🧰 Блоки</p>'+order.map(k=>
+      `<button class="piece${slots.includes(k)?' used':''}${selected===k?' sel':''}" draggable="true" data-k="${k}">${defs[k].html}</button>`).join('');
+    const s=i=>`<div class="slot${slots[i]?' filled':''}" tabindex="0" data-i="${i}">${slots[i]?defs[slots[i]].html:['Сюда — блок цикла','Сюда — первый блок внутри','Сюда — второй блок внутри'][i]}</div>`;
+    document.getElementById('build').innerHTML=
+      `${hat()}${s(0)}<div class="inner">${s(1)}${s(2)}</div><div class="cap"></div>`;
+    tray.querySelectorAll('.piece').forEach(p=>{
+      p.onclick=()=>{ selected = selected===p.dataset.k?null:p.dataset.k; draw(); };
+      p.ondragstart=e=>{ e.dataTransfer.setData('text/plain',p.dataset.k); selected=p.dataset.k; };
+    });
+    document.querySelectorAll('#build .slot').forEach(sl=>{
+      const i=+sl.dataset.i;
+      sl.onclick=()=>{
+        if(slots[i]){ slots[i]=null; }
+        else if(selected){ place(i,selected); }
+        draw();
+      };
+      sl.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();sl.click();} };
+      sl.ondragover=e=>{e.preventDefault();sl.classList.add('over');};
+      sl.ondragleave=()=>sl.classList.remove('over');
+      sl.ondrop=e=>{e.preventDefault(); const k=e.dataTransfer.getData('text/plain'); if(k&&!slots[i]) place(i,k); draw();};
+    });
+  }
+  function place(i,k){
+    const old=slots.indexOf(k); if(old>-1) slots[old]=null;
+    slots[i]=k; selected=null;
+  }
+  draw();
+
+  document.getElementById('checkBtn').onclick=()=>{
+    if(slots.includes(null)){
+      feedback('info','🧩','Пока не все места заполнены. Поставь три блока в скрипт!'); return; }
+    if(slots.every((k,i)=>k===need[i])){
+      done(true);
+      document.getElementById('checkBtn').remove();
+      feedback('good','🟧',`${pick(cheers)} Блок «повторить» обнимает команды внутри, и кот рисует квадрат: вперёд-поворот, вперёд-поворот… 4 раза!`);
+      nextButton();
+    }else{
+      done(false); attempts++;
+      const hintText = slots[0]!=='rep'
+        ? 'Блок «повторить» должен быть сверху, он обнимает остальные.'
+        : 'Внутри цикла сначала <b>идти</b>, потом <b>повернуть</b>.';
+      feedback('try','🤗',`${pick(softs)} ${hintText}`);
+    }
+  };
+}
+
+/* ---------- ЗАДАНИЕ 4: что изменится ---------- */
+function task4(){
+  const costumes=['🐱','😺','😻'];
+  const answer=1;     // 1→2→3→1→2: останется второй костюм
+  wrap(4,'Что изменится? 🎭',
+    'У кота есть 3 костюма: 🐱 первый, 😺 второй, 😻 третий. Сейчас на нём первый костюм. Какой костюм будет у кота, когда скрипт закончится?',
+    `<div class="row">
+       ${script(loop(4, nextCostume()+wait(0.5)))}
+       <div class="stage"><div class="cat" id="cat">🐱</div><div class="track" id="tr">Костюм № 1</div></div>
+     </div>
+     <div class="nums">${costumes.map((c,i)=>`<button class="num" data-i="${i}">${c}<br><small style="font-size:.4em">костюм ${i+1}</small></button>`).join('')}</div>`);
+  card.querySelectorAll('.num').forEach(btn=>{
+    btn.onclick=()=>{
+      if(+btn.dataset.i===answer){
+        btn.classList.add('right');
+        card.querySelectorAll('.num').forEach(b=>b.disabled=true);
+        done(true);
+        feedback('good','🎭',`${pick(cheers)} Смотри на экран: 1 → 2 → 3 → снова 1 → 2. После 4 повторов кот в <b>втором</b> костюме!`);
+        let k=0; const cat=document.getElementById('cat'), tr=document.getElementById('tr');
+        const t=setInterval(()=>{
+          k++; const c=k%3; cat.textContent=costumes[c]; tr.textContent='Костюм № '+(c+1);
+          cat.style.transform=`scale(${1+(k%2)*.2})`;
+          if(k===4){clearInterval(t);nextButton();}
+        },650);
+      }else{
+        btn.classList.remove('wrong'); void btn.offsetWidth; btn.classList.add('wrong');
+        done(false); attempts++;
+        feedback('try','💡',`${pick(softs)} Считай по порядку: каждый раз костюм меняется на следующий. Когда костюмы заканчиваются, снова идёт первый!`);
+      }
+    };
+  });
+}
+
+/* ---------- ИТОГИ ---------- */
+function results(){
+  const ok=firstTry.filter(Boolean).length;
+  const stars = ok===4?3 : ok===3?2 : 1;
+  const msg = {
+    3:['🤩','Отлично, ты мастер циклов!','Все задания с первого раза — это супер! Скретч-кот гордится тобой!'],
+    2:['😄','Хорошая работа!','Ты почти мастер циклов. Ещё немного практики, и будет 3 звезды!'],
+    1:['🙂','Попробуй ещё раз, у тебя получится!','Циклы — непростая тема, но ты уже многое узнал. Пройди тренажёр снова!']
+  }[stars];
+  progress.innerHTML=''; for(let i=0;i<TOTAL;i++) progress.innerHTML+='<div class="dot done"></div>';
+  card.className='card enter result';
+  card.innerHTML=`
+    <div class="big-face">${msg[0]}</div>
+    <div class="stars" id="stars">${[1,2,3].map(i=>`<span data-i="${i}">⭐</span>`).join('')}</div>
+    <h2>${msg[1]}</h2>
+    <p class="q">${msg[2]}</p>
+    <div class="sum">${firstTry.map((f,i)=>`<div class="${f?'ok':'no'}">Задание ${i+1}: ${f?'✅':'🔁'}</div>`).join('')}</div>
+    <div class="actions"><button class="btn" id="again">🔄 Начать сначала</button></div>`;
+  document.querySelectorAll('#stars span').forEach((s,i)=>{
+    if(i<stars) setTimeout(()=>s.classList.add('on'),400+i*500);
+  });
+  document.getElementById('again').onclick=restart;
+}
+
+/* ---------- ЗАПУСК ---------- */
+const tasks=[task1,task2,task3,task4];
+function show(){
+  attempts=0;
+  renderProgress();
+  if(step>=TOTAL){ results(); return; }
+  tasks[step]();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function restart(){ step=0; firstTry=[]; show(); }
+document.getElementById('restartTop').onclick=restart;
+show();
+</script>
+</body>
+</html>
